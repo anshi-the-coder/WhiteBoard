@@ -1,8 +1,9 @@
 body {
     margin: 0;
+    font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
-    font-family: Arial, sans-serif;
+    height: 100vh;
   }
   
   .toolbar {
@@ -12,12 +13,94 @@ body {
     padding: 10px;
     background-color: #f1f1f1;
     border-bottom: 1px solid #ccc;
+    flex-wrap: wrap;
+  }
+  
+  .toolbar label {
+    font-size: 14px;
+  }
+  
+  input[type="color"] {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+  }
+  
+  input[type="range"] {
+    width: 100px;
+  }
+  
+  button {
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  button:hover {
+    background-color: #45a049;
   }
   
   canvas {
     flex-grow: 1;
     width: 100%;
-    height: 100vh;
+    height: 100%;
+    background-color: #fff;
     cursor: crosshair;
+    box-sizing: border-box;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 600px) {
+    .toolbar {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    input[type="color"], input[type="range"], button {
+      width: 100%;
+      margin-bottom: 5px;
+    }
+  
+    input[type="color"] {
+      width: 40px;
+      height: 40px;
+    }
+  
+    input[type="range"] {
+      width: 80%;
+    }
+  
+    button {
+      width: 100%;
+    }
+  
+    canvas {
+      width: 100%;
+      height: auto;  /* Adjust the canvas height to maintain aspect ratio */
+    }
+  }
+  
+  @media (max-width: 400px) {
+    .toolbar {
+      padding: 8px;
+    }
+  
+    input[type="color"] {
+      width: 35px;
+      height: 35px;
+    }
+  
+    input[type="range"] {
+      width: 70%;
+    }
+  
+    button {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
   }
   
