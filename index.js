@@ -40,9 +40,9 @@ canvas.addEventListener('mousemove', draw);
 canvas.addEventListener('mouseup', stopDrawing);
 canvas.addEventListener('mouseout', stopDrawing);
 
-canvas.addEventListener('touchstart', startDrawing, { passive: true });
-canvas.addEventListener('touchmove', draw, { passive: true });
-canvas.addEventListener('touchend', stopDrawing);
+canvas.addEventListener('touchstart', startDrawing, { passive: false });
+canvas.addEventListener('touchmove', draw, { passive: false });
+canvas.addEventListener('touchend', stopDrawing, { passive: false });
 
 document.getElementById('color').addEventListener('input', (e) => {
   currentColor = e.target.value;
@@ -58,6 +58,7 @@ document.getElementById('save').addEventListener('click', saveCanvas);
 document.getElementById('clear').addEventListener('click', clearCanvas);
 
 function startDrawing(e) {
+  e.preventDefault(); // Prevent scrolling on touch devices
   drawing = true;
   const pos = getPosition(e);
   ctx.beginPath();
@@ -66,6 +67,7 @@ function startDrawing(e) {
 
 function draw(e) {
   if (!drawing) return;
+  e.preventDefault(); // Prevent scrolling on touch devices
   const pos = getPosition(e);
   ctx.lineWidth = currentThickness;
   ctx.lineCap = 'round';
