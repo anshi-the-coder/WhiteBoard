@@ -21,11 +21,28 @@ function getCanvasOffset() {
   return { x: rect.left, y: rect.top };
 }
 
-// Event listeners
+// Utility to get the correct position (mouse or touch)
+function getPosition(e) {
+  const offset = getCanvasOffset();
+  if (e.touches) {
+    // For touch events
+    const touch = e.touches[0];
+    return { x: touch.clientX - offset.x, y: touch.clientY - offset.y };
+  } else {
+    // For mouse events
+    return { x: e.clientX - offset.x, y: e.clientY - offset.y };
+  }
+}
+
+// Event listeners for mouse and touch
 canvas.addEventListener('mousedown', startDrawing);
 canvas.addEventListener('mousemove', draw);
 canvas.addEventListener('mouseup', stopDrawing);
 canvas.addEventListener('mouseout', stopDrawing);
+
+canvas.addEventListener('touchstart', startDrawing, { passive: true });
+canvas.addEventListener('touchmove', draw, { passive: true });
+canvas.addEventListener('touchend', stopDrawing);
 
 document.getElementById('color').addEventListener('input', (e) => {
   currentColor = e.target.value;
@@ -41,21 +58,20 @@ document.getElementById('save').addEventListener('click', saveCanvas);
 document.getElementById('clear').addEventListener('click', clearCanvas);
 
 function startDrawing(e) {
-  const offset = getCanvasOffset();
   drawing = true;
+  const pos = getPosition(e);
   ctx.beginPath();
-  ctx.moveTo(e.clientX - offset.x, e.clientY - offset.y);
+  ctx.moveTo(pos.x, pos.y);
 }
 
 function draw(e) {
   if (!drawing) return;
-
-  const offset = getCanvasOffset();
+  const pos = getPosition(e);
   ctx.lineWidth = currentThickness;
   ctx.lineCap = 'round';
   ctx.strokeStyle = isEraser ? '#FFFFFF' : currentColor;
 
-  ctx.lineTo(e.clientX - offset.x, e.clientY - offset.y);
+  ctx.lineTo(pos.x, pos.y);
   ctx.stroke();
 }
 
@@ -65,28 +81,27 @@ function stopDrawing() {
 }
 
 function saveCanvas() {
-    // Create a temporary canvas to combine background and drawing
-    const tempCanvas = document.createElement('canvas');
-    const tempCtx = tempCanvas.getContext('2d');
-    
-    // Set the size of the temporary canvas
-    tempCanvas.width = canvas.width;
-    tempCanvas.height = canvas.height;
-    
-    // Draw a white background
-    tempCtx.fillStyle = '#FFFFFF';
-    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-    
-    // Draw the original canvas content over the white background
-    tempCtx.drawImage(canvas, 0, 0);
-    
-    // Save the image from the temporary canvas
-    const link = document.createElement('a');
-    link.download = 'whiteboard.png';
-    link.href = tempCanvas.toDataURL('image/png');
-    link.click();
+  // Create a temporary canvas to combine background and drawing
+  const tempCanvas = document.createElement('canvas');
+  const tempCtx = tempCanvas.getContext('2d');
+
+  // Set the size of the temporary canvas
+  tempCanvas.width = canvas.width;
+  tempCanvas.height = canvas.height;
+
+  // Draw a white background
+  tempCtx.fillStyle = '#FFFFFF';
+  tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+  // Draw the original canvas content over the white background
+  tempCtx.drawImage(canvas, 0, 0);
+
+  // Save the image from the temporary canvas
+  const link = document.createElement('a');
+  link.download = 'whiteboard.png';
+  link.href = tempCanvas.toDataURL('image/png');
+  link.click();
 }
-  
 
 function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
